@@ -17,15 +17,15 @@ public static class DogStagin
 		var undog = dogRecord.Undog;
 		var dgt = dogRecord.Kdgt;
 		var dogstatus = dogRecord.Kdgd;
-
+		var docType = DgtTable.GetRecord(dgt, new[] { "PROTTYPE_" }).GetFieldValue<string>("PROTTYPE_").Split(',').ToList();
 		return SqlClient.Main.RecordsExist("DMZ",
 			new SqlCmdText(
 				//"UNDOG = @undog and KDMT = (select KDMT from DOGC_ where KDGT = @KDGT and KDGD = @KDGD) and DOSTATUS = @STATUS",
-				"UNDOG = @undog and KDMT in ('04_03_UKR','PRHOXD','PROFNIOKRS') and DOSTATUS = @STATUS",
+				"UNDOG = @undog and KDMT in (@KDGTs) and DOSTATUS = @STATUS",
 				new SqlParam("undog", undog),
-				new SqlParam("KDGT", dgt),
-				new SqlParam("KDGD", dogstatus),
-				new SqlParam("STATUS", DocStatus.Active)));
+				new SqlParam("KDGTs", docType){Array = true},
+				//new SqlParam("KDGD", dogstatus),
+				new SqlParam("STATUS", DocStatus.Completed)));
 	}
 
 	public static int CreateDocument(DogTable.Record dogRecord)
